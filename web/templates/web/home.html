@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}Главная - Habit Tracker{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto text-center">
+        <h1 class="display-4 mb-4">Habit Tracker</h1>
+        <p class="lead">Создавайте полезные привычки и отслеживайте свой прогресс</p>
+        <p class="text-muted">Основано на принципах книги "Атомные привычки" Джеймса Клира</p>
+        
+        {% if not user.is_authenticated %}
+            <div class="mt-5">
+                <a href="{% url 'web:register' %}" class="btn btn-primary btn-lg me-3">Начать сейчас</a>
+                <a href="{% url 'web:login' %}" class="btn btn-outline-primary btn-lg">Войти</a>
+            </div>
+        {% else %}
+            <div class="mt-5">
+                <a href="{% url 'web:dashboard' %}" class="btn btn-primary btn-lg me-3">Мои привычки</a>
+                <a href="{% url 'web:create_habit' %}" class="btn btn-success btn-lg">Создать привычку</a>
+            </div>
+        {% endif %}
+        
+        <div class="row mt-5">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5>Создавайте</h5>
+                        <p>Определяйте конкретные действия для ваших привычек</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5>Напоминания</h5>
+                        <p>Получайте уведомления в Telegram</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5>Отслеживайте</h5>
+                        <p>Следите за своим прогрессом</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

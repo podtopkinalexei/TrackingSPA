@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block title %}Создать привычку - Habit Tracker{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">Создать новую привычку</h4>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="action" class="form-label">Действие *</label>
+                                <input type="text" class="form-control" id="action" name="action" required
+                                       placeholder="Я буду...">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="place" class="form-label">Место *</label>
+                                <input type="text" class="form-control" id="place" name="place" required
+                                       placeholder="В...">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="time" class="form-label">Время *</label>
+                                <input type="time" class="form-control" id="time" name="time" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="time_to_complete" class="form-label">Время на выполнение (сек.) *</label>
+                                <input type="number" class="form-control" id="time_to_complete" 
+                                       name="time_to_complete" value="60" min="1" max="120" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="periodicity" class="form-label">Периодичность *</label>
+                        <select class="form-select" id="periodicity" name="periodicity" required>
+                            {% for value, label in periodicity_choices %}
+                                <option value="{{ value }}">{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="is_pleasant" name="is_pleasant">
+                        <label class="form-check-label" for="is_pleasant">Это приятная привычка</label>
+                    </div>
+
+                    <div id="reward-section">
+                        <div class="mb-3">
+                            <label for="reward" class="form-label">Вознаграждение</label>
+                            <input type="text" class="form-control" id="reward" name="reward"
+                                   placeholder="Чем себя вознаградить...">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="related_habit" class="form-label">Или выберите связанную приятную привычку</label>
+                            <select class="form-select" id="related_habit" name="related_habit">
+                                <option value="">-- Выберите привычку --</option>
+                                {% for habit in pleasant_habits %}
+                                    <option value="{{ habit.id }}">{{ habit.action }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="is_public" name="is_public">
+                        <label class="form-check-label" for="is_public">Сделать привычку публичной</label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">Создать привычку</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('is_pleasant').addEventListener('change', function() {
+    const rewardSection = document.getElementById('reward-section');
+    if (this.checked) {
+        rewardSection.style.display = 'none';
+    } else {
+        rewardSection.style.display = 'block';
+    }
+});
+
+// Инициализация при загрузке
+document.addEventListener('DOMContentLoaded', function() {
+    const isPleasant = document.getElementById('is_pleasant');
+    const rewardSection = document.getElementById('reward-section');
+    if (isPleasant.checked) {
+        rewardSection.style.display = 'none';
+    }
+});
+</script>
+{% endblock %}

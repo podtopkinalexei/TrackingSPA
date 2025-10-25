@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}Мои привычки - Habit Tracker{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Мои привычки</h2>
+    <a href="{% url 'web:create_habit' %}" class="btn btn-success">+ Создать привычку</a>
+</div>
+
+{% if habits %}
+    <div class="row">
+        {% for habit in habits %}
+            <div class="col-md-6">
+                <div class="card habit-card {% if habit.is_pleasant %}pleasant-habit{% else %}useful-habit{% endif %}">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            {% if habit.is_pleasant %}😊{% else %}💪{% endif %}
+                            {{ habit.action }}
+                        </h5>
+                        <p class="card-text">
+                            <strong>Место:</strong> {{ habit.place }}<br>
+                            <strong>Время:</strong> {{ habit.time }}<br>
+                            <strong>Периодичность:</strong> {{ habit.get_periodicity_display }}<br>
+                            <strong>Время выполнения:</strong> {{ habit.time_to_complete }} сек.
+                        </p>
+                        {% if habit.reward %}
+                            <p class="card-text"><strong>Вознаграждение:</strong> {{ habit.reward }}</p>
+                        {% endif %}
+                        {% if habit.related_habit %}
+                            <p class="card-text"><strong>Связанная привычка:</strong> {{ habit.related_habit.action }}</p>
+                        {% endif %}
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">
+                                {% if habit.is_public %}
+                                    <span class="badge bg-success">Публичная</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Приватная</span>
+                                {% endif %}
+                                {% if habit.is_pleasant %}
+                                    <span class="badge bg-info">Приятная</span>
+                                {% else %}
+                                    <span class="badge bg-primary">Полезная</span>
+                                {% endif %}
+                            </small>
+                            <div>
+                                <a href="#" class="btn btn-sm btn-outline-primary">Редактировать</a>
+                                <a href="#" class="btn btn-sm btn-outline-danger">Удалить</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="text-center py-5">
+        <h4>У вас пока нет привычек</h4>
+        <p class="text-muted">Создайте свою первую привычку прямо сейчас!</p>
+        <a href="{% url 'web:create_habit' %}" class="btn btn-primary">Создать первую привычку</a>
+    </div>
+{% endif %}
+{% endblock %}
