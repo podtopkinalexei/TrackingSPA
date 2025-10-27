@@ -11,20 +11,16 @@ def send_telegram_reminder():
     """Отправка напоминаний в Telegram о привычках"""
     now = timezone.now()
     current_time = now.time()
-    current_weekday = now.weekday() + 1  # 1-7, где 1 - понедельник
 
     # Находим привычки, которые нужно выполнить в текущее время
-    # и которые соответствуют текущему дню периодичности
     habits = Habit.objects.filter(
         time__hour=current_time.hour,
         time__minute=current_time.minute
     ).select_related('user')
 
     for habit in habits:
-        # Проверяем периодичность (если сегодня подходящий день для привычки)
-        if current_weekday % habit.periodicity == 0:
-            if habit.user.telegram_chat_id:
-                send_habit_reminder.delay(habit.id)
+        if habit.user.telegram_chat_id:
+            send_habit_reminder.delay(habit.id)
 
 
 @shared_task
@@ -38,7 +34,6 @@ def send_habit_reminder(habit_id):
     if not habit.user.telegram_chat_id:
         return
 
-    # Формируем сообщение
     message = format_reminder_message(habit)
     send_telegram_message.delay(habit.user.telegram_chat_id, message)
 
@@ -83,4 +78,3 @@ def format_reminder_message(habit):
         f"{reward_text}\n\n"
         f"Удачи! 💪"
     )
-
