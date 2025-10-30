@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Публичные привычки - Habit Tracker{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Публичные привычки</h2>
+
+{% if habits %}
+    <div class="row">
+        {% for habit in habits %}
+            <div class="col-md-6">
+                <div class="card habit-card {% if habit.is_pleasant %}pleasant-habit{% else %}useful-habit{% endif %}">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            {% if habit.is_pleasant %}😊{% else %}💪{% endif %}
+                            {{ habit.action }}
+                        </h5>
+                        <p class="card-text">
+                            <strong>Автор:</strong> {{ habit.user.username }}<br>
+                            <strong>Место:</strong> {{ habit.place }}<br>
+                            <strong>Время:</strong> {{ habit.time }}<br>
+                            <strong>Периодичность:</strong> {{ habit.get_periodicity_display }}<br>
+                            <strong>Время выполнения:</strong> {{ habit.time_to_complete }} сек.
+                        </p>
+                        <small class="text-muted">
+                            Создано: {{ habit.created_at|date:"d.m.Y" }}
+                        </small>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="text-center py-5">
+        <h4>Публичных привычек пока нет</h4>
+        <p class="text-muted">Будьте первым, кто поделится своей привычкой!</p>
+        <a href="{% url 'web:create_habit' %}" class="btn btn-primary">Создать привычку</a>
+    </div>
+{% endif %}
+{% endblock %}
