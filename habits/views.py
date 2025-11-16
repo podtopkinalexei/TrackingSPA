@@ -2,7 +2,7 @@ from rest_framework import generics, permissions
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter, SearchFilter
 from .models import Habit
-from .serializers import HabitSerializer, PublicHabitSerializer, HabitCreateSerializer
+from .serializers import HabitSerializer, PublicHabitSerializer
 from .pagination import HabitPagination
 
 
@@ -16,12 +16,11 @@ class HabitListCreateView(generics.ListCreateAPIView):
     search_fields = ['action', 'place']
 
     def get_serializer_class(self):
-        if self.request.method == 'POST':
-            return HabitCreateSerializer
         return HabitSerializer
 
     def get_queryset(self):
         return Habit.objects.filter(user=self.request.user)
+
 
 
 class HabitRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
