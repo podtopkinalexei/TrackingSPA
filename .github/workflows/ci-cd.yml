@@ -50,7 +50,7 @@ jobs:
 
     - name: Run tests with SQLite
       run: |
-        python manage.py test --settings=TrackingSPA.settings_test
+        python manage.py test
 
     - name: Run linting
       run: |
