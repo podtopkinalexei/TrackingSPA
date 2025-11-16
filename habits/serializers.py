@@ -12,6 +12,11 @@ class HabitSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ('user', 'created_at', 'updated_at')
 
+    def create(self, validated_data):
+        # Устанавливаем текущего пользователя
+        validated_data['user'] = self.context['request'].user
+        return super().create(validated_data)
+
     def validate(self, data):
         # Создаем временный объект привычки для валидации
         habit = Habit(**data)
@@ -25,10 +30,6 @@ class HabitSerializer(serializers.ModelSerializer):
 
         return data
 
-    def create(self, validated_data):
-        validated_data['user'] = self.context['request'].user
-        return super().create(validated_data)
-
 
 class PublicHabitSerializer(serializers.ModelSerializer):
     user = UserShortSerializer(read_only=True)
@@ -40,11 +41,4 @@ class PublicHabitSerializer(serializers.ModelSerializer):
         read_only_fields = fields
 
 
-class HabitCreateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Habit
-        fields = ('place', 'time', 'action', 'is_pleasant', 'related_habit',
-                  'periodicity', 'reward', 'time_to_complete', 'is_public')
 
-    def validate(self, data):
-        return super().validate(data)
