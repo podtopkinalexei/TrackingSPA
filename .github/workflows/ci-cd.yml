@@ -48,18 +48,24 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Run tests with SQLite
+    - name: Run tests
       run: |
         python manage.py test
       env:
         DEBUG: True
-        SECRET_KEY: test-secret-key
-        DB_ENGINE: django.db.backends.sqlite3
-        DB_NAME: test_db.sqlite3
+        SECRET_KEY: test-secret-key-12345
+        DB_NAME: test_habit_tracker
+        DB_USER: postgres
+        DB_PASSWORD: postgres
+        DB_HOST: localhost
+        DB_PORT: 5432
+        CELERY_BROKER_URL: redis://localhost:6379/0
+        CELERY_RESULT_BACKEND: redis://localhost:6379/0
 
     - name: Run linting
       run: |
         pip install flake8
+        
         
 
   build:

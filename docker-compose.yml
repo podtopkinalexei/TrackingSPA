@@ -5,16 +5,14 @@ services:
     image: postgres:13
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    env_file:
-      - .env
     environment:
-      POSTGRES_DB: ${DB_NAME}
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME:-habit_tracker}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-habit_tracker}"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -35,13 +33,11 @@ services:
       - media_volume:/app/media
     ports:
       - "8000:8000"
-    env_file:
-      - .env
     environment:
-      - DEBUG=${DEBUG}
-      - DB_NAME=${DB_NAME}
-      - DB_USER=${DB_USER}
-      - DB_PASSWORD=${DB_PASSWORD}
+      - DEBUG=${DEBUG:-False}
+      - DB_NAME=${DB_NAME:-habit_tracker}
+      - DB_USER=${DB_USER:-postgres}
+      - DB_PASSWORD=${DB_PASSWORD:-postgres}
       - DB_HOST=db
       - DB_PORT=5432
       - SECRET_KEY=${SECRET_KEY}
@@ -54,18 +50,17 @@ services:
       redis:
         condition: service_started
 
+  # Аналогично исправьте для celery и celery-beat...
   celery:
     build: .
     command: celery -A TrackingSPA worker --loglevel=info
     volumes:
       - .:/app
-    env_file:
-      - .env
     environment:
-      - DEBUG=${DEBUG}
-      - DB_NAME=${DB_NAME}
-      - DB_USER=${DB_USER}
-      - DB_PASSWORD=${DB_PASSWORD}
+      - DEBUG=${DEBUG:-False}
+      - DB_NAME=${DB_NAME:-habit_tracker}
+      - DB_USER=${DB_USER:-postgres}
+      - DB_PASSWORD=${DB_PASSWORD:-postgres}
       - DB_HOST=db
       - DB_PORT=5432
       - SECRET_KEY=${SECRET_KEY}
@@ -83,13 +78,11 @@ services:
     command: celery -A TrackingSPA beat --loglevel=info
     volumes:
       - .:/app
-    env_file:
-      - .env
     environment:
-      - DEBUG=${DEBUG}
-      - DB_NAME=${DB_NAME}
-      - DB_USER=${DB_USER}
-      - DB_PASSWORD=${DB_PASSWORD}
+      - DEBUG=${DEBUG:-False}
+      - DB_NAME=${DB_NAME:-habit_tracker}
+      - DB_USER=${DB_USER:-postgres}
+      - DB_PASSWORD=${DB_PASSWORD:-postgres}
       - DB_HOST=db
       - DB_PORT=5432
       - SECRET_KEY=${SECRET_KEY}
