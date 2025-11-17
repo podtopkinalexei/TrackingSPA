@@ -129,6 +129,7 @@ jobs:
             sleep 15    
             docker-compose exec -T web python manage.py migrate
             docker-compose exec -T web python manage.py collectstatic --noinput
+            docker-compose up -d celery celery-beat
             docker-compose exec -T web python manage.py shell -c "
               from django.contrib.auth import get_user_model
               User = get_user_model()
