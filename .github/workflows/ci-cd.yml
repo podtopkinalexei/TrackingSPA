@@ -117,11 +117,33 @@ jobs:
           port: 22
           script: |
             set -e
-            cd /opt/trackingspa/
+            echo "→ Создаем директорию..."
+            sudo mkdir -p /opt/trackingspa
+            sudo chown -R $USER:$USER /opt/trackingspa
+            
+            echo "→ Клонируем репозиторий..."
+            cd /opt/trackingspa
+            git clone https://github.com/podtopkinalexei/TrackingSPA.git . || true
+            
+            echo "→ Обновляем код..."
             git pull origin main
-            docker-compose down
+            
+            echo "→ Останавливаем старые контейнеры..."
+            docker-compose down || true
+            
+            echo "→ Пересобираем образы..."
             docker-compose build --no-cache
+            
+            echo "→ Запускаем контейнеры..."
             docker-compose up -d
-            sleep 10
+            
+            echo "→ Ждем запуска БД..."
+            sleep 15
+            
+            echo "→ Применяем миграции..."
             docker-compose exec -T web python manage.py migrate
+            
+            echo "→ Собираем статические файлы..."
             docker-compose exec -T web python manage.py collectstatic --noinput
+            
+            echo "→ Деплой завершен успешно!"
