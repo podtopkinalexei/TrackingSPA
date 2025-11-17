@@ -2,7 +2,7 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Для Debian-based систем используем этот подход
+
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     gcc \
